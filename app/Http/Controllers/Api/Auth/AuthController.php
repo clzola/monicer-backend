@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\UserResource;
 use App\Support\Auth\RespondWithTokenTrait;
+use App\User;
 
 class AuthController extends Controller
 {
@@ -44,6 +45,8 @@ class AuthController extends Controller
         /** @var User $user */
         $user = auth('api')->user();
         $user->load('wallet');
+        if($user->role === User::ROLE_SHOP)
+            $user->load('shop');
         return new UserResource($user);
     }
 

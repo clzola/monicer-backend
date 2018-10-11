@@ -28,3 +28,6 @@ Route::group(['middleware' => 'api', 'namespace' => 'Api'], function ($router) {
 
     Route::post('/shop/initiate-payment', 'PaymentController@pay');
 });
+
+Route::get('/shops', 'Api\ShopsController@getShops');
+Route::get('/shops/{shop}', 'Api\ShopsController@shop');
