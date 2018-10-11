@@ -24,6 +24,12 @@ class RoomsController extends Controller
     public function join($code)
     {
         $room = Room::where('code', $code)->firstOrFail();
+
+
+        // if there is something wrong remove this check
+        if($room->status !== Room::STATUS_CREATED)
+            return response()->json(['error_message' => 'Invalid room status!']);
+
         $customer = auth('api')->user();
 
         // you cannot join twice
@@ -39,6 +45,10 @@ class RoomsController extends Controller
         $roomOwner = auth('api')->user();
         $room = Room::where('code', $code)->firstOrFail();
 
+        // if there is something wrong remove this check
+        if($room->status !== Room::STATUS_CREATED)
+            return response()->json(['error_message' => 'Invalid room status!']);
+
         if($room->owner_id != $roomOwner->id) {
             return response()->json(['error_message' => 'Not owner of the room']);
         }
@@ -51,6 +61,10 @@ class RoomsController extends Controller
     {
         $roomOwner = auth('api')->user();
         $room = Room::where('code', $code)->firstOrFail();
+
+        // if there is something wrong remove this check
+        if($room->status !== Room::STATUS_CREATED)
+            return response()->json(['error_message' => 'Invalid room status!']);
 
         if($room->owner_id != $roomOwner->id) {
             return response()->json(['error_message' => 'Not owner of the room']);
