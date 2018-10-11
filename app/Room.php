@@ -26,7 +26,7 @@ class Room extends Model
     public function customers()
     {
         return $this->belongsToMany(User::class, 'room_user', 'room_id', 'customer_id')
-            ->withPivot(['room_id', 'user_id', 'participation_amount']);
+            ->withPivot(['room_id', 'customer_id', 'participation_amount']);
     }
 
     public function owner()

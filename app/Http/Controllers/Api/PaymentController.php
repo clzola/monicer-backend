@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Room;
-use App\Shop;
 use App\Transaction;
 use App\User;
 use App\Wallet;
 use http\Env\Response;
 use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 
 class PaymentController extends Controller
 {
@@ -20,14 +19,12 @@ class PaymentController extends Controller
 
         $type = ($code[0] == 'u' || $code[0] == 'r') ? 'app' : 'cash';
 
-        if($type === 'app')
+
+        if ($type === 'app')
             return $this->payWithApplication($amount, $code, auth('api')->user());
-        if($type === 'cash')
+        if ($type === 'cash')
             return $this->payWithCash($amount, intval($code), auth('api')->user());
-        else return response()->json([
-            'error_message' => 'Invalid payment type: expected: app or cash',
-            'error_status' => 400
-        ], 400);
+        else return response()->json(['error_message' => 'Invalid payment type: expected: app or cash'], 400);
 
     }
 
@@ -40,24 +37,20 @@ class PaymentController extends Controller
     public function payWithApplication($amount, $code, $shopUser)
     {
         $response = null;
-        if($code[0] == 'r')
-             $response = $this->validateSplit($amount, $code, $shopUser);
+        if ($code[0] == 'r')
+            $response = $this->validateSplit($amount, $code, $shopUser);
 
-        if(!is_null($response))
+        if (!is_null($response))
             return $response;
 
         $customer = User::where('pay_code', $code)->first();
 
 
-        if(is_null($customer))
-            return response()->json([
-                'error_message' => 'Invalid payment code: expected application or room code',
-            ]);
+        if (is_null($customer))
+            return response()->json(['error_message' => 'Invalid payment code: expected application or room code',], 400);
 
-        if($customer->id === $shopUser->id) {
-            return response()->json([
-                'error_message' => 'You cannot send money to yourself!',
-            ]);
+        if ($customer->id === $shopUser->id) {
+            return response()->json(['error_message' => 'You cannot send money to yourself!'], 400);
         }
 
         $transaction = new Transaction();
@@ -65,10 +58,8 @@ class PaymentController extends Controller
         $transaction->type = Transaction::TYPE_CUSTOMER_PAYMENT;
 
         $customer->wallet->balance -= $transaction->amount;
-        if($customer->wallet->balance < 0) {
-            return response([
-                "error_message" => 'Insufficient funds'
-            ], 400);
+        if ($customer->wallet->balance < 0) {
+            return response(["error_message" => 'Insufficient funds in your wallet'], 400);
         }
 
         $transaction->from_wallet = $customer->wallet->id;
@@ -78,7 +69,7 @@ class PaymentController extends Controller
         $customer->wallet->save();
         $shopUser->wallet->save();
         $transaction->save();
-        $customer->pay_code = 'u'.str_random();
+        $customer->pay_code = 'u' . str_random();
         $customer->save();
 
         $totalCashBack = $transaction->amount * $shopUser->shop->discount1 / 100;
@@ -123,16 +114,12 @@ class PaymentController extends Controller
     {
         $customerWallet = Wallet::where('address', $code)->first();
 
-        if(is_null($customerWallet)) {
-            return response()->json([
-                'error_message' => 'Wallet with that address does not exists!',
-            ], 400);
+        if (is_null($customerWallet)) {
+            return response()->json(['error_message' => 'Wallet with that address does not exists!'], 400);
         }
 
-        if($customerWallet->owner->id === $shopUser->id) {
-            return response()->json([
-                'error_message' => 'You cannot send money to yourself!',
-            ]);
+        if ($customerWallet->owner->id === $shopUser->id) {
+            return response()->json(['error_message' => 'You cannot send money to yourself!'], 400);
         }
 
         $totalCashBack = $amount * $shopUser->shop->discount1 / 100;
@@ -169,16 +156,16 @@ class PaymentController extends Controller
     {
         /** @var Room $room */
         $room = Room::where('code', $code)->first();
-        if(is_null($room))
+        if (is_null($room))
             return null;
 
         $customersFunds = 0;
-        $customers = $room->customers()->get();
+        $customers = $room->customers;
         foreach ($customers as $customer) {
             $customersFunds += $customer->wallet->balance;
         }
 
-        if($customersFunds < $amount) {
+        if ($customersFunds < $amount) {
             return response()->json(['error_message' => 'Insufficient funds for split'], 400);
         }
 
@@ -191,14 +178,15 @@ class PaymentController extends Controller
         $split = array_fill(0, $customers->count(), 0);
         $splitDone = array_fill(0, $customers->count(), false);
         $customersWithInsufficientFunds = 0;
-        while( true ) {
+
+        while (true) {
             $atLeastOneWithInsufficientFunds = false;
             $distribution = $totalAmount / ($customers->count() - $customersWithInsufficientFunds);
             foreach ($customers as $i => $customer) {
-                if( $splitDone[$i] )
+                if ($splitDone[$i])
                     continue;
 
-                if($customer->wallet->balance < $distribution) {
+                if ($customer->wallet->balance < $distribution) {
                     $customersWithInsufficientFunds++;
                     $atLeastOneWithInsufficientFunds = true;
                     $split[$i] = $customer->wallet->balance;
@@ -206,17 +194,17 @@ class PaymentController extends Controller
                     $totalAmount -= $customer->wallet->balance;
                     continue;
                 } else {
-                    $customer->splitAmount = $distribution;
+                    $split[$i] = $distribution;
                 }
             }
-            if(!$atLeastOneWithInsufficientFunds)
+            if (!$atLeastOneWithInsufficientFunds)
                 break;
         }
 
         foreach ($customers as $i => $customer) {
             $customer->wallet->balance -= $split[$i];
             $customer->wallet->save();
-            $room->customers()->attach($customer->id, ['participation_amount' => $split[$i]]);
+            $room->customers()->updateExistingPivot($customer->id, ['participation_amount' => $split[$i]]);
         }
 
         // TODO: broadcast event to room owner
@@ -226,9 +214,23 @@ class PaymentController extends Controller
 
     public function rebalance($code, Request $request)
     {
-        $room = Room::where('code', $code)->findOrFail();
-        foreach ($request->get('customers') as $customer) {
-            $room->customers()->updateExistingPivot($customer['id'], ['participation_amount' => $customer['amount']]);
+        $room = Room::where('code', $code)->firstOrFail();
+
+        if($room->status !== Room::STATUS_PAYMENT_PROCESSING) {
+            return response()->json(['error_message' => "Invalid room status!"], 400);
+        }
+
+        if ($room->owner_id !== auth('api')->id()) {
+            return response()->json(["error_message" => "Not the owner of the room!", 400]);
+        }
+
+        if ($request->get('do_rebalance', false)) {
+            foreach ($request->get('customers') as $customer) {
+                $wallet = Wallet::where('owner_id', $customer['id'])->first();
+                if ($wallet->balance < doubleval($customer['amount']))
+                    return response()->json(['One of users has insufficient funds in his wallet! ']);
+                $room->customers()->updateExistingPivot($customer['id'], ['participation_amount' => $customer['amount']]);
+            }
         }
 
         $room->status = Room::STATUS_PAYMENT_PROCESSED;
