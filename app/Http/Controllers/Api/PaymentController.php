@@ -68,7 +68,7 @@ class PaymentController extends Controller
         $customer->wallet->save();
         $shopUser->wallet->save();
         $transaction->save();
-        $customer->pay_code = str_random();
+        $customer->pay_code = 'u'.str_random();
         $customer->save();
 
         $totalCashBack = $transaction->amount * $shopUser->shop->discount1 / 100;

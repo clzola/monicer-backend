@@ -16,7 +16,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'monicer.account@omnired.eu',
             'password' => bcrypt('123456'),
             'role' => 'admin',
-            'pay_code' => str_random(),
+            'pay_code' => 'u'.str_random(),
         ]);
 
         \App\User::create([
@@ -24,7 +24,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'aleksandar.vukovic@omnired.eu',
             'password' => bcrypt('123456'),
             'role' => 'customer',
-            'pay_code' => str_random(),
+            'pay_code' => 'u'.str_random(),
         ]);
 
         \App\User::create([
@@ -32,7 +32,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'davor.golubovic@omnired.eu',
             'password' => bcrypt('123456'),
             'role' => 'customer',
-            'pay_code' => str_random(),
+            'pay_code' => 'u'.str_random(),
         ]);
 
         \App\User::create([
@@ -40,7 +40,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'vladimir.bigovic@omnired.eu',
             'password' => bcrypt('123456'),
             'role' => 'customer',
-            'pay_code' => str_random(),
+            'pay_code' => 'u'.str_random(),
         ]);
 
         \App\User::create([
@@ -48,7 +48,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'lazar.radinovic@omnired.eu',
             'password' => bcrypt('123456'),
             'role' => 'customer',
-            'pay_code' => str_random(),
+            'pay_code' => 'u'.str_random(),
         ]);
 
         \App\User::create([
@@ -56,7 +56,7 @@ class UsersTableSeeder extends Seeder
             'email' => 'janko.jankovic@test.com',
             'password' => bcrypt('123456'),
             'role' => 'shop',
-            'pay_code' => str_random(),
+            'pay_code' => 'u'.str_random(),
         ]);
     }
 }
