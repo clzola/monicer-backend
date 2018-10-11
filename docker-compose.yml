@@ -1,0 +1,35 @@
+version: '2'
+
+services:
+
+  app:
+    build:
+      context: ./
+      dockerfile: app.dockerfile
+    working_dir: /home
+    volumes:
+    - ./:/home
+    user: "1000:1000"
+  web:
+    build:
+      context: ./
+      dockerfile: web.dockerfile
+    working_dir: /home
+    volumes_from:
+    - app
+    ports:
+    - 8080:80
+
+  database:
+    image: postgres:10-alpine
+    volumes:
+    - pgdata:/var/lib/postgresql/data
+    environment:
+    - "POSTGRES_DB=mtel_hackaton"
+    - "POSTGRES_USER=lazar"
+    - "POSTGRES_PASSWORD=admin"
+    ports:
+    - 54032:5432
+
+volumes:
+  pgdata:
