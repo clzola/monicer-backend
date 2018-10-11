@@ -42,6 +42,19 @@ class User extends Authenticatable implements JWTSubject
     }
 
     /**
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getRealWalletOwnerName()
+    {
+        if($this->role === User::ROLE_CUSTOMER)
+            return $this->name;
+        if($this->role === User::ROLE_SHOP)
+            return $this->shop->name;
+        else throw new \Exception('not supported wallet owner');
+    }
+
+    /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
      * @return mixed

@@ -24,4 +24,5 @@ Route::group(['middleware' => 'api', 'namespace' => 'Api'], function ($router) {
     Route::get('me', 'Auth\AuthController@me');
 
     Route::get('/wallet', 'WalletsController@getMyWallet');
+    Route::get('/transactions', 'TransactionsController@transactions');
 });
