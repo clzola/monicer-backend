@@ -21,9 +21,9 @@ class PaymentController extends Controller
         $transaction->amount = $amount;
 
         if($type === 'app')
-            return $this->payWithApplication($transaction, $code);
+            return $this->payWithApplication($transaction, $code, auth('api')->user());
         if($type === 'cash')
-            return $this->payWithCash($amount, intval($code));
+            return $this->payWithCash($amount, intval($code), auth('api')->user());
         else return response()->json([
             'error_message' => 'Invalid payment type: expected: app or cash',
             'error_status' => 400
@@ -36,10 +36,9 @@ class PaymentController extends Controller
      * @param $code
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function payWithApplication($transaction, $code)
+    public function payWithApplication($transaction, $code, $shopUser)
     {
         $customer = User::where('pay_code', $code)->first();
-        $shopUser = auth('api')->user();
 
         if(is_null($customer))
             return response()->json([
@@ -109,9 +108,8 @@ class PaymentController extends Controller
      * @param string $code
      * @return \Illuminate\Contracts\Routing\ResponseFactory|\Illuminate\Http\Response
      */
-    public function payWithCash($amount, $code)
+    public function payWithCash($amount, $code, $shopUser)
     {
-        $shopUser = auth('api')->user();
         $customerWallet = Wallet::where('address', $code)->first();
 
         if(is_null($customerWallet)) {
