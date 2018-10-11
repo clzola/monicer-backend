@@ -42,5 +42,13 @@ class UsersTableSeeder extends Seeder
             'role' => 'customer',
             'pay_code' => str_random(),
         ]);
+
+        \App\User::create([
+            'name' => 'Janko Jankovic',
+            'email' => 'janko.jankovic@test.com',
+            'password' => bcrypt('123456'),
+            'role' => 'shop',
+            'pay_code' => str_random(),
+        ]);
     }
 }

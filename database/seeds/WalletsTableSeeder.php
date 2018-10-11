@@ -34,5 +34,11 @@ class WalletsTableSeeder extends Seeder
             'balance' => 1000,
             'address' => 896697
         ]);
+
+        \App\Wallet::create([
+            'owner_id' => 5,
+            'balance' => 1000,
+            'address' => 55964
+        ]);
     }
 }
