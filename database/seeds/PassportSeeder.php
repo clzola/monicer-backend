@@ -17,7 +17,7 @@ class PassportSeeder extends Seeder
             "redirect" => "http://localhost ",
             "personal_access_client" => true,
             "password_client" => false,
-            "revo   ked" => false
+            "revoked" => false
         ]);
 
         \DB::table('oauth_clients')->insert([

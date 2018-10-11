@@ -15,24 +15,32 @@ class UsersTableSeeder extends Seeder
             'name' => 'Aleksandar Vukovic',
             'email' => 'aleksandar.vukovic@omnired.eu',
             'password' => bcrypt('123456'),
+            'role' => 'customer',
+            'pay_code' => str_random(),
         ]);
 
         \App\User::create([
             'name' => 'Davor Golubovic',
             'email' => 'davor.golubovic@omnired.eu',
             'password' => bcrypt('123456'),
+            'role' => 'customer',
+            'pay_code' => str_random(),
         ]);
 
         \App\User::create([
             'name' => 'Vladimir Bigovic',
             'email' => 'vladimir.bigovic@omnired.eu',
             'password' => bcrypt('123456'),
+            'role' => 'customer',
+            'pay_code' => str_random(),
         ]);
 
         \App\User::create([
             'name' => 'Lazar Radinovic',
             'email' => 'lazar.radinovic@omnired.eu',
             'password' => bcrypt('123456'),
+            'role' => 'customer',
+            'pay_code' => str_random(),
         ]);
     }
 }

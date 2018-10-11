@@ -11,21 +11,18 @@ class User extends Authenticatable
 {
     use Notifiable, HasApiTokens;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+    const ROLE_ADMIN = "admin";
+    const ROLE_CUSTOMER = "customer";
+    const ROLE_SHOP = "shop";
+
     protected $fillable = [
-        'name', 'email', 'password',
+        'name',
+        'email',
+        'password',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
-        'password', 'remember_token',
+        'password',
+        'remember_token',
     ];
 }
