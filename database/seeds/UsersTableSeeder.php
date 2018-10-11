@@ -52,6 +52,14 @@ class UsersTableSeeder extends Seeder
         ]);
 
         \App\User::create([
+            'name' => 'Danilo Montero',
+            'email' => 'danilo.montero@omnired.eu',
+            'password' => bcrypt('123456'),
+            'role' => 'customer',
+            'pay_code' => 'u'.str_random(),
+        ]);
+
+        \App\User::create([
             'name' => 'Janko Jankovic',
             'email' => 'janko.jankovic@test.com',
             'password' => bcrypt('123456'),

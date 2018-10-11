@@ -19,6 +19,7 @@ class CreateTransactionsTable extends Migration
             $table->bigInteger('to_wallet');
             $table->double('amount');
             $table->string('type');
+            $table->boolean('to_room')->nullable();
             $table->timestamps();
         });
     }

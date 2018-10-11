@@ -8,6 +8,7 @@ class Room extends Model
 {
     const STATUS_CREATED = "created";
     const STATUS_SCANNED = "scanned";
+    const STATUS_PAYMENT_PROCESSING = "payment_processing";
     const STATUS_PAYMENT_PROCESSED = "payment_processed";
 
     protected $fillable = [
@@ -24,7 +25,8 @@ class Room extends Model
 
     public function customers()
     {
-        return $this->belongsToMany(User::class, 'room_user', 'room_id', 'customer_id');
+        return $this->belongsToMany(User::class, 'room_user', 'room_id', 'customer_id')
+            ->withPivot(['room_id', 'user_id', 'participation_amount']);
     }
 
     public function owner()

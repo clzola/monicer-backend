@@ -19,9 +19,13 @@ class CreateRoomsTable extends Migration
             $table->string('status')->default(\App\Room::STATUS_CREATED);
             $table->double('bill_amount')->nullable();
             $table->unsignedInteger('owner_id');
+            $table->unsignedInteger('to_wallet');
             $table->timestamps();
 
             $table->foreign('owner_id')->references('id')->on('users')
+                ->onUpdate('cascade')->onDelete('restrict');
+
+            $table->foreign('to_wallet')->references('id')->on('wallets')
                 ->onUpdate('cascade')->onDelete('restrict');
         });
     }
