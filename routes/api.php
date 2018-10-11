@@ -16,3 +16,12 @@ use Illuminate\Http\Request;
 Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
+
+Route::group(['middleware' => 'api', 'namespace' => 'Api'], function ($router) {
+    Route::post('auth/token', 'Auth\AuthController@login');
+    Route::delete('auth/token', 'Auth\AuthController@logout');
+    Route::post('auth/refresh', 'Auth\AuthController@refresh');
+    Route::get('me', 'Auth\AuthController@me');
+
+    Route::get('/wallet', 'WalletsController@getMyWallet');
+});

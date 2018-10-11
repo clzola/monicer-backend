@@ -17,4 +17,9 @@ class Wallet extends Model
         'address' => 'integer',
         'balance' => 'double',
     ];
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
 }
