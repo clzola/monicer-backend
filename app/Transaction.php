@@ -6,9 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Transaction extends Model
 {
-    const TYPE_CASHBACK = "cashback";
+    const TYPE_CASH_BACK = "cashback";
     const TYPE_CUSTOMER_PAYMENT = "customer_payment";
     const TYPE_ROOM_PAYMENT = "room_payment";
+    const TYPE_FEE = "fee";
 
     protected $casts = [
         'id' => 'integer',

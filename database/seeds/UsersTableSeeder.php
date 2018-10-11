@@ -12,6 +12,14 @@ class UsersTableSeeder extends Seeder
     public function run()
     {
         \App\User::create([
+            'name' => 'Monicer Account',
+            'email' => 'monicer.account@omnired.eu',
+            'password' => bcrypt('123456'),
+            'role' => 'admin',
+            'pay_code' => str_random(),
+        ]);
+
+        \App\User::create([
             'name' => 'Aleksandar Vukovic',
             'email' => 'aleksandar.vukovic@omnired.eu',
             'password' => bcrypt('123456'),

@@ -68,16 +68,26 @@ class PaymentController extends Controller
         $totalCashBack = $transaction->amount * $shopUser->shop->discount1 / 100;
         $returnToCustomer = $transaction->amount * $shopUser->shop->discount2 / 100;
 
-        $customer->wallet->balance += $returnToCustomer;
         $shopUser->wallet->balance -= $totalCashBack;
+        $customer->wallet->balance += $returnToCustomer;
         $fee = $totalCashBack - $returnToCustomer;
 
         $returnTransaction = new Transaction();
         $returnTransaction->amount = $returnToCustomer;
         $returnTransaction->from_wallet = $shopUser->wallet->id;
         $returnTransaction->to_wallet = $customer->wallet->id;
-        $returnTransaction->type = Transaction::TYPE_CASHBACK;
+        $returnTransaction->type = Transaction::TYPE_CASH_BACK;
         $returnTransaction->save();
+
+        $monicer = User::find(1);
+        $feeTransaction = new Transaction();
+        $feeTransaction->amount = $fee;
+        $feeTransaction->from_wallet = $shopUser->wallet->id;
+        $feeTransaction->to_wallet = $monicer->wallet->id;
+        $feeTransaction->type = Transaction::TYPE_FEE;
+        $feeTransaction->save();
+        $monicer->wallet->balance += $feeTransaction->amount;
+        $monicer->wallet->save();
 
         $customer->wallet->save();
         $shopUser->wallet->save();
@@ -115,7 +125,15 @@ class PaymentController extends Controller
         $returnTransaction->amount = $returnToCustomer;
         $returnTransaction->from_wallet = $shopUser->wallet->id;
         $returnTransaction->to_wallet = $customerWallet->id;
-        $returnTransaction->type = Transaction::TYPE_CASHBACK;
+        $returnTransaction->type = Transaction::TYPE_CASH_BACK;
+        $returnTransaction->save();
+
+        $monicer = User::find(1);
+        $returnTransaction = new Transaction();
+        $returnTransaction->amount = $fee;
+        $returnTransaction->from_wallet = $shopUser->wallet->id;
+        $returnTransaction->to_wallet = $monicer->wallet->id;
+        $returnTransaction->type = Transaction::TYPE_FEE;
         $returnTransaction->save();
 
         $customerWallet->save();

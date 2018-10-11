@@ -15,7 +15,7 @@ class ShopsTableSeeder extends Seeder
             'name' => 'Bonella Green Bazar',
             'discount1' => 10,
             'discount2' => 5,
-            'user_id' => 5
+            'user_id' => 6
         ]);
     }
 }
