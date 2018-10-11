@@ -23,6 +23,7 @@ class WalletsController extends Controller
                 $query->where('from_wallet', $wallet->id)
                     ->orWhere('to_wallet', $wallet->id);
             })
+            ->latest()
             ->get();
 
         $savedMoney = doubleval(Transaction::where('type', Transaction::TYPE_CASH_BACK)

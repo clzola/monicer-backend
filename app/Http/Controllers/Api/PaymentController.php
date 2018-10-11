@@ -265,8 +265,7 @@ class PaymentController extends Controller
             $transaction->from_wallet = $shopWallet->id;
             $transaction->to_wallet = $customer->wallet->id;
             $transaction->amount = $customer->pivot->participation_amount / $room->bill_amount * $returnToCustomers;
-            $transaction->type = Transaction::TYPE_ROOM_PAYMENT;
-            $transaction->to_room = true;
+            $transaction->type = Transaction::TYPE_CASH_BACK;
             $transaction->save();
         }
 

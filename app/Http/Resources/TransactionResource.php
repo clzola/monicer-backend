@@ -26,7 +26,7 @@ class TransactionResource extends JsonResource
             if($this->to_room) {
                 $room = Room::find($this->to_wallet);
                 $toWallet = Wallet::find($room->to_wallet);
-                $amount = $room->customers()->where('pivot_customer_id', $this->walletFrom->owner->id)->first()->pivot->particiation_amount;
+                $amount = $room->customers()->wherePivot('customer_id', $this->walletFrom->owner->id)->first()->pivot->participation_amount;
             }
             else {
                 $room = Room::find($this->from_wallet);
@@ -48,7 +48,7 @@ class TransactionResource extends JsonResource
                 'name' => $this->walletFrom->owner->getRealWalletOwnerName(),
             ],
             'to' => $to,
-            'amount' => $amount,
+            'amount' => doubleval($amount),
             'type' => $this->type,
             'created_at' => $this->created_at->format('Y-m-d H:m:s'),
         ];
