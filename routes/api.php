@@ -25,4 +25,6 @@ Route::group(['middleware' => 'api', 'namespace' => 'Api'], function ($router) {
 
     Route::get('/wallet', 'WalletsController@getMyWallet');
     Route::get('/transactions', 'TransactionsController@transactions');
+
+    Route::post('/shop/initiate-payment', 'PaymentController@pay');
 });

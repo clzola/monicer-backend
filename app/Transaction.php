@@ -8,6 +8,7 @@ class Transaction extends Model
 {
     const TYPE_CASHBACK = "cashback";
     const TYPE_CUSTOMER_PAYMENT = "customer_payment";
+    const TYPE_ROOM_PAYMENT = "room_payment";
 
     protected $casts = [
         'id' => 'integer',

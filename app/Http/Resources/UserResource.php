@@ -19,6 +19,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'wallet' => new WalletResource($this->whenLoaded('wallet')),
+            'pay_code' => $this->pay_code,
         ];
     }
 }
