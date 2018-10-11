@@ -20,31 +20,31 @@ class WalletsTableSeeder extends Seeder
         \App\Wallet::create([
             'owner_id' => 2,
             'balance' => 1000,
-            'address' => 58957
+            'address' => 9215481
         ]);
 
         \App\Wallet::create([
             'owner_id' => 3,
             'balance' => 1000,
-            'address' => 125698
+            'address' => 8641253
         ]);
 
         \App\Wallet::create([
             'owner_id' => 4,
             'balance' => 1000,
-            'address' => 874521
+            'address' => 8529641
         ]);
 
         \App\Wallet::create([
             'owner_id' => 5,
             'balance' => 1000,
-            'address' => 896697
+            'address' => 2614583
         ]);
 
         \App\Wallet::create([
             'owner_id' => 6,
             'balance' => 1000,
-            'address' => 896697
+            'address' => 9614542
         ]);
 
         \App\Wallet::create([
