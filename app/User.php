@@ -51,7 +51,18 @@ class User extends Authenticatable implements JWTSubject
             return $this->name;
         if($this->role === User::ROLE_SHOP)
             return $this->shop->name;
-        else throw new \Exception('not supported wallet owner');
+        else throw new \Exception('not supported wallet owner for name');
+    }
+
+    /**
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getCashBackPercent()
+    {
+        if($this->role === User::ROLE_SHOP)
+            return $this->shop->discount2;
+        return null;
     }
 
     /**
