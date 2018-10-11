@@ -13,9 +13,22 @@ class Room extends Model
     protected $fillable = [
         'code',
         'status',
+        'owner_id',
     ];
 
     protected $casts = [
         'id' => 'integer',
+        'bill_amount' => 'double',
+        'owner_id' => 'integer',
     ];
+
+    public function customers()
+    {
+        return $this->belongsToMany(User::class, 'room_user', 'room_id', 'customer_id');
+    }
+
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'owner_id');
+    }
 }

@@ -27,6 +27,11 @@ Route::group(['middleware' => 'api', 'namespace' => 'Api'], function ($router) {
     Route::get('/transactions', 'TransactionsController@transactions');
 
     Route::post('/shop/initiate-payment', 'PaymentController@pay');
+
+    Route::post('/rooms/create', 'RoomsController@create');
+    Route::post('/rooms/{code}/join', 'RoomsController@join');
+    Route::post('/rooms/{code}/kick/{user}', 'RoomsController@kickUser');
+    Route::post('/rooms/{code}/recycle', 'RoomsController@recycle');
 });
 
 Route::get('/shops', 'Api\ShopsController@getShops');
