@@ -2,6 +2,8 @@
 
 namespace App\Support\Auth;
 
+use App\Http\Resources\UserResource;
+
 trait RespondWithTokenTrait
 {
     /**

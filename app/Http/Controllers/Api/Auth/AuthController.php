@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\TokenResource;
 use App\Http\Resources\UserResource;
 use App\Support\Auth\RespondWithTokenTrait;
 use App\User;
@@ -24,7 +25,7 @@ class AuthController extends Controller
     /**
      * Get a JWT via given credentials.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return TokenResource
      */
     public function login()
     {
@@ -32,7 +33,18 @@ class AuthController extends Controller
         if (!$token = auth('api')->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
-        return $this->respondWithToken($token);
+
+        $user = User::where('email', $credentials['email'])->first();
+        $user->load('wallet');
+        if($user->role === User::ROLE_SHOP)
+            $user->load('shop');
+
+        $stdToken = new \stdClass();
+        $stdToken->access_token = $token;
+        $stdToken->token_type = 'bearer';
+        $stdToken->user = $user;
+
+        return new TokenResource($stdToken);
     }
 
     /**
