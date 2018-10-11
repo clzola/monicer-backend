@@ -46,6 +46,12 @@ class PaymentController extends Controller
                 'error_message' => 'Invalid payment code: expected application or room code',
             ]);
 
+        if($customer->id === $shopUser->id) {
+            return response()->json([
+                'error_message' => 'You cannot send money to yourself!',
+            ]);
+        }
+
         $transaction->type = Transaction::TYPE_CUSTOMER_PAYMENT;
 
         $customer->wallet->balance -= $transaction->amount;
@@ -112,6 +118,12 @@ class PaymentController extends Controller
             return response()->json([
                 'error_message' => 'Wallet with that address does not exists!',
             ], 400);
+        }
+
+        if($customerWallet->owner->id === $shopUser->id) {
+            return response()->json([
+                'error_message' => 'You cannot send money to yourself!',
+            ]);
         }
 
         $totalCashBack = $amount * $shopUser->shop->discount1 / 100;
