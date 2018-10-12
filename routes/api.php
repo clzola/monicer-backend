@@ -39,3 +39,5 @@ Route::group(['middleware' => 'api', 'namespace' => 'Api'], function ($router) {
 
 Route::get('/shops', 'Api\ShopsController@getShops');
 Route::get('/shops/{shop}', 'Api\ShopsController@shop');
+
+Route::get('/test/broadcast', 'Test\BroadcastController@test');

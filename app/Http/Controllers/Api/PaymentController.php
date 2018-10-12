@@ -2,6 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\PaymentConfirmedEvent;
+use App\Events\PayWithCashCompletedEvent;
+use App\Events\PayWithCashFailedEvent;
+use App\Events\SplitValidatedEvent;
 use App\Http\Controllers\Controller;
 use App\Room;
 use App\Transaction;
@@ -44,7 +48,6 @@ class PaymentController extends Controller
             return $response;
 
         $customer = User::where('pay_code', $code)->first();
-
 
         if (is_null($customer))
             return response()->json(['error_message' => 'Invalid payment code: expected application or room code',], 400);
@@ -99,6 +102,8 @@ class PaymentController extends Controller
         $customer->wallet->save();
         $shopUser->wallet->save();
 
+        event(new PaymentConfirmedEvent($customer->pay_code, $returnToCustomer, $transaction));
+
         return response()->json([
             'message' => 'Success'
         ]);
@@ -115,10 +120,12 @@ class PaymentController extends Controller
         $customerWallet = Wallet::where('address', $code)->first();
 
         if (is_null($customerWallet)) {
+            event(new PayWithCashFailedEvent('Wallet with that address does not exists!'));
             return response()->json(['error_message' => 'Wallet with that address does not exists!'], 400);
         }
 
         if ($customerWallet->owner->id === $shopUser->id) {
+            event(new PayWithCashFailedEvent('You cannot send money to yourself!'));
             return response()->json(['error_message' => 'You cannot send money to yourself!'], 400);
         }
 
@@ -146,6 +153,8 @@ class PaymentController extends Controller
 
         $customerWallet->save();
         $shopUser->wallet->save();
+
+        event(new PayWithCashCompletedEvent($returnToCustomer));
 
         return response()->json([
             'message' => 'Success'
@@ -201,13 +210,21 @@ class PaymentController extends Controller
                 break;
         }
 
+        $eventCustomers = [];
         foreach ($customers as $i => $customer) {
             $customer->wallet->balance -= $split[$i];
             $customer->wallet->save();
+            $eventCustomers[] = [
+                'id' => $customer->id,
+                'name' => $customer->name,
+                'split' => $split[$i],
+                'max' => $splitDone[$i],
+            ];
             $room->customers()->updateExistingPivot($customer->id, ['participation_amount' => $split[$i]]);
         }
 
-        // TODO: broadcast event to room owner
+
+        event(new SplitValidatedEvent($amount, $eventCustomers));
 
         return response()->json(['message' => 'Success']);
     }
