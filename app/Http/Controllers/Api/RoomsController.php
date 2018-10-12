@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Events\RoomJoinEvent;
 use App\Http\Resources\RoomResource;
 use App\Room;
 use App\User;
@@ -25,7 +26,6 @@ class RoomsController extends Controller
     {
         $room = Room::where('code', $code)->firstOrFail();
 
-
         // if there is something wrong remove this check
         if($room->status !== Room::STATUS_CREATED)
             return response()->json(['error_message' => 'Invalid room status!']);
@@ -34,9 +34,12 @@ class RoomsController extends Controller
 
         // you cannot join twice
         if($room->customers()->where('customer_id', $customer->id)->exists())
-            return;
+            return response()->json(["message" => "You cannot join twice: userid:" . $customer->name]);
 
         $room->customers()->attach($customer);
+
+        event(new RoomJoinEvent($code, $customer->id, $customer->name));
+
         return response()->json(['message' => 'Success']);
     }
 
